@@ -79,6 +79,21 @@
                     <p>Building dynamic single-page apps</p>
                 </div>
                 <div class="skill-card">
+                    <i class="fab fa-php"></i>
+                    <h3>PHP</h3>
+                    <p>Server-side scripting for web development</p>
+                </div>
+                <div class="skill-card">
+                    <i class="fas fa-database"></i>
+                    <h3>MySQL</h3>
+                    <p>Relational database management</p>
+                </div>
+                <div class="skill-card">
+                    <i class="fab fa-wordpress"></i>
+                    <h3>WordPress</h3>
+                    <p>CMS development and customization</p>
+                </div>
+                <div class="skill-card">
                     <i class="fas fa-mobile-alt"></i>
                     <h3>Responsive Design</h3>
                     <p>Mobile-first approach</p>
@@ -155,8 +170,8 @@
         <div class="container">
             <div class="about-content">
                 <h2 class="section-title">About Me</h2>
-                <p>I'm a passionate frontend developer with 3 years of experience creating modern web applications. My journey began when I built my first website in college, and I've been hooked ever since.</p>
-                <p>I specialize in React and responsive design, but I'm always learning new technologies to stay at the forefront of web development.</p>
+                <p>I'm a passionate fullstack developer with 3 years of experience creating modern web applications. My journey began when I built my first website in college, and I've been hooked ever since.</p>
+                <p>I specialize in both frontend (React, JavaScript) and backend (PHP, Node.js) development, with expertise in database management (MySQL, MongoDB) and CMS platforms like WordPress.</p>
                 <p>When I'm not coding, you can find me hiking, reading sci-fi novels, or experimenting with new recipes in the kitchen.</p>
                 <a href="#" class="btn btn-primary">Download Resume</a>
             </div>
@@ -200,12 +215,16 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2023 Rubaiyat. All rights reserved.</p>
+            <p>&copy; <span id="current-year">2023</span> Rubaiyat. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="assets/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script>
+        // Update copyright year automatically
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
