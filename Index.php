@@ -177,7 +177,7 @@
             </div>
             <div class="about-image">
                 <!-- [ABOUT IMAGE PLACEHOLDER] -->
-                <img src="https://via.placeholder.com/400x500" alt="Rubaiyat portrait">
+                <img src="assets/profile.jpg" alt="Rubaiyat portrait">
             </div>
         </div>
     </section>
