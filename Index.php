@@ -14,7 +14,7 @@
     <header class="header">
         <div class="container">
             <nav class="navbar">
-                <a href="#" class="logo">Rubaiyat.</a>
+                <a href="#" class="logo">Rubaiyat</a>
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#skills">Skills</a></li>
