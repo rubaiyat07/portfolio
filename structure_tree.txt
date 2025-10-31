@@ -1,0 +1,9 @@
+portfolio
+|
+|----->assets
+|       |----->script.js
+|       |----->styles.css
+|       |----->dev.png
+|       |----->profile.jpg
+|
+|-----> index.php

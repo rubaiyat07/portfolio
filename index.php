@@ -1,3 +1,24 @@
+<?php
+require_once 'config.php';
+
+// Fetch skills from database
+$stmt = $conn->prepare("SELECT * FROM skills ORDER BY display_order ASC");
+$stmt->execute();
+$skills = $stmt->fetchAll();
+
+// Fetch projects from database
+$stmt = $conn->prepare("SELECT * FROM projects ORDER BY display_order ASC");
+$stmt->execute();
+$projects = $stmt->fetchAll();
+
+// Function to get project technologies
+function getProjectTech($project_id) {
+    global $conn;
+    $stmt = $conn->prepare("SELECT technology FROM project_technologies WHERE project_id = ?");
+    $stmt->execute([$project_id]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +69,6 @@
                 </div>
             </div>
             <div class="hero-image">
-                <!-- [HERO IMAGE PLACEHOLDER] -->
                 <img src="assets/dev.png" alt="Developer illustration">
             </div>
         </div>
@@ -58,51 +78,13 @@
         <div class="container">
             <h2 class="section-title">My Skills</h2>
             <div class="skills-grid">
+                <?php foreach($skills as $skill): ?>
                 <div class="skill-card">
-                    <i class="fab fa-html5"></i>
-                    <h3>HTML5</h3>
-                    <p>Semantic markup for accessible websites</p>
+                    <i class="<?php echo htmlspecialchars($skill['icon_class']); ?>"></i>
+                    <h3><?php echo htmlspecialchars($skill['title']); ?></h3>
+                    <p><?php echo htmlspecialchars($skill['description']); ?></p>
                 </div>
-                <div class="skill-card">
-                    <i class="fab fa-css3-alt"></i>
-                    <h3>CSS3</h3>
-                    <p>Modern styling with Flexbox and Grid</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fab fa-js"></i>
-                    <h3>JavaScript</h3>
-                    <p>Interactive web experiences</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fab fa-react"></i>
-                    <h3>React</h3>
-                    <p>Building dynamic single-page apps</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fab fa-php"></i>
-                    <h3>PHP</h3>
-                    <p>Server-side scripting for web development</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-database"></i>
-                    <h3>MySQL</h3>
-                    <p>Relational database management</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fab fa-wordpress"></i>
-                    <h3>WordPress</h3>
-                    <p>CMS development and customization</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-mobile-alt"></i>
-                    <h3>Responsive Design</h3>
-                    <p>Mobile-first approach</p>
-                </div>
-                <div class="skill-card">
-                    <i class="fas fa-pencil-ruler"></i>
-                    <h3>UI/UX Design</h3>
-                    <p>User-centered interfaces</p>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -111,57 +93,30 @@
         <div class="container">
             <h2 class="section-title">Featured Projects</h2>
             <div class="projects-grid">
+                <?php foreach($projects as $project): 
+                    $technologies = getProjectTech($project['id']);
+                ?>
                 <div class="project-card">
-                    <!-- [PROJECT 1 IMAGE PLACEHOLDER] -->
-                    <img src="images/project1.jpg" alt="E-Commerce Website">
+                    <img src="<?php echo htmlspecialchars($project['image_url'] ?: 'images/default-project.jpg'); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>">
                     <div class="project-info">
-                        <h3>E-Commerce Website</h3>
-                        <p>A full-stack online store built with React, Node.js, and MongoDB.</p>
+                        <h3><?php echo htmlspecialchars($project['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($project['description']); ?></p>
                         <div class="tech-tags">
-                            <span>React</span>
-                            <span>Node.js</span>
-                            <span>MongoDB</span>
+                            <?php foreach($technologies as $tech): ?>
+                            <span><?php echo htmlspecialchars($tech); ?></span>
+                            <?php endforeach; ?>
                         </div>
                         <div class="project-links">
-                            <a href="#" class="btn btn-code">View Code</a>
-                            <a href="#" class="btn btn-demo">Live Demo</a>
+                            <?php if($project['code_url']): ?>
+                            <a href="<?php echo htmlspecialchars($project['code_url']); ?>" class="btn btn-code" target="_blank">View Code</a>
+                            <?php endif; ?>
+                            <?php if($project['demo_url']): ?>
+                            <a href="<?php echo htmlspecialchars($project['demo_url']); ?>" class="btn btn-demo" target="_blank">Live Demo</a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-                <div class="project-card">
-                    <!-- [PROJECT 2 IMAGE PLACEHOLDER] -->
-                    <img src="images/project2.jpg" alt="Task Management App">
-                    <div class="project-info">
-                        <h3>Task Management App</h3>
-                        <p>A productivity app with drag-and-drop functionality and real-time updates.</p>
-                        <div class="tech-tags">
-                            <span>Vue.js</span>
-                            <span>Firebase</span>
-                            <span>Tailwind CSS</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-code">View Code</a>
-                            <a href="#" class="btn btn-demo">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card">
-                    <!-- [PROJECT 3 IMAGE PLACEHOLDER] -->
-                    <img src="images/project3.jpg" alt="Weather Dashboard">
-                    <div class="project-info">
-                        <h3>Weather Dashboard</h3>
-                        <p>Real-time weather application with 5-day forecast and location search.</p>
-                        <div class="tech-tags">
-                            <span>JavaScript</span>
-                            <span>API</span>
-                            <span>CSS3</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-code">View Code</a>
-                            <a href="#" class="btn btn-demo">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>
@@ -170,13 +125,13 @@
         <div class="container">
             <div class="about-content">
                 <h2 class="section-title">About Me</h2>
-                <p>I'm a passionate fullstack developer with 3 years of experience creating modern web applications. My journey began when I built my first website in college, and I've been hooked ever since.</p>
-                <p>I specialize in both frontend (React, JavaScript) and backend (PHP, Node.js) development, with expertise in database management (MySQL, MongoDB) and CMS platforms like WordPress.</p>
-                <p>When I'm not coding, you can find me hiking, reading sci-fi novels, or experimenting with new recipes in the kitchen.</p>
-                <a href="#" class="btn btn-primary">Download Resume</a>
+                <p>I'm a passionate PHP and Full Stack Developer with hands-on experience in building dynamic and scalable web applications. I completed my diploma course in <strong>Web Application Development</strong> under the IsDB-BISEW IT Scholarship Program, where I gained strong skills in PHP, MySQL, JavaScript, jQuery, and RESTful API integration.</p>
+                <p>I love creating efficient, user-friendly systems — from backend logic to interactive frontend interfaces. I’ve also worked with tools like Bootstrap, Ajax, Git, and GitHub, and I’m always eager to learn new technologies and improve my craft.</p>
+                <p>Beyond coding, I enjoy exploring creative ideas, writing, and spending time in calm, reflective moments that recharge my focus and creativity.</p>
+                <a href="assets/Rubaiyat_Afreen.pdf" class="btn btn-primary" download>Download Resume</a>
+
             </div>
             <div class="about-image">
-                <!-- [ABOUT IMAGE PLACEHOLDER] -->
                 <img src="assets/profile.jpg" alt="Rubaiyat portrait">
             </div>
         </div>
@@ -186,42 +141,39 @@
         <div class="container">
             <h2 class="section-title">Get In Touch</h2>
             <div class="contact-content">
-                <form class="contact-form">
+                <form class="contact-form" method="POST" action="contact-handler.php">
                     <div class="form-group">
-                        <input type="text" placeholder="Your Name" required>
+                        <input type="text" name="name" placeholder="Your Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" placeholder="Your Email" required>
+                        <input type="email" name="email" placeholder="Your Email" required>
                     </div>
                     <div class="form-group">
-                        <textarea placeholder="Your Message" rows="5" required></textarea>
+                        <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
                 <div class="contact-info">
                     <h3>Contact Information</h3>
-                    <p><i class="fas fa-envelope"></i> hello@rubaiyatdev.com</p>
-                    <p><i class="fas fa-phone"></i> (123) 456-7890</p>
+                    <p><i class="fas fa-envelope"></i> rubaiyat97wd@gmail.com</p>
+                    <p><i class="fas fa-phone"></i> (+880) 1945 - 559018</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+                    <p>Follow Me:</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-github"></i></a>
-                        <a href="#"><i class="fab fa-linkedin"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="https://github.com/rubaiyat07" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/rubaiyat07" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.behance.net/rubaiyatafreen" target="_blank"><i class="fab fa-behance"></i></a>
+                        <a href="https://www.pinterest.com/rubaiyat07" target="_blank"><i class="fab fa-pinterest"></i></a>
+                        <a href="https://wa.me/8801945559018" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.facebook.com/rubaiyat07" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.instagram.com/rubaiyat.07" target="_blank"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; <span id="current-year">2023</span> Rubaiyat. All rights reserved.</p>
-        </div>
-    </footer>
-
     <script src="assets/script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <script>
         // Update copyright year automatically
         document.getElementById('current-year').textContent = new Date().getFullYear();
