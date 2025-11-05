@@ -1,5 +1,9 @@
 <?php
 require_once 'config.php';
+require_once 'visitor-tracker.php';
+
+// Track this page visit
+trackVisitor($conn);
 
 // Fetch skills from database
 $stmt = $conn->prepare("SELECT * FROM skills ORDER BY display_order ASC");
@@ -93,8 +97,10 @@ function getProjectTech($project_id) {
         <div class="container">
             <h2 class="section-title">Featured Projects</h2>
             <div class="projects-grid">
-                <?php foreach($projects as $project): 
+                <?php foreach($projects as $project):
                     $technologies = getProjectTech($project['id']);
+                    // Track project view
+                    trackProjectView($conn, $project['id']);
                 ?>
                 <div class="project-card">
                     <img src="<?php echo htmlspecialchars($project['image_url'] ?: 'images/default-project.jpg'); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>">

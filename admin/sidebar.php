@@ -9,6 +9,7 @@ $active_dashboard = (!$iframe_mode && $current_page == 'dashboard.php') ? 'activ
 $active_skills = (!$iframe_mode && $current_page == 'manage-skills.php') ? 'active' : '';
 $active_projects = (!$iframe_mode && $current_page == 'manage-projects.php') ? 'active' : '';
 $active_messages = (!$iframe_mode && $current_page == 'manage-messages.php') ? 'active' : '';
+$active_statistics = (!$iframe_mode && $current_page == 'statistics.php') ? 'active' : '';
 
 // Link modifiers for iframe mode
 $link_suffix = $iframe_mode ? '?no_sidebar=1' : '';
@@ -26,6 +27,7 @@ $target_attr = $iframe_mode ? ' target="admin-content"' : '';
         <a href="manage-skills.php<?php echo $link_suffix; ?>"<?php echo $target_attr; ?> class="<?php echo $active_skills; ?>"><i class="fas fa-code"></i> Manage Skills</a>
         <a href="manage-projects.php<?php echo $link_suffix; ?>"<?php echo $target_attr; ?> class="<?php echo $active_projects; ?>"><i class="fas fa-project-diagram"></i> Manage Projects</a>
         <a href="manage-messages.php<?php echo $link_suffix; ?>"<?php echo $target_attr; ?> class="<?php echo $active_messages; ?>"><i class="fas fa-envelope"></i> Manage Messages</a>
+        <a href="statistics.php<?php echo $link_suffix; ?>"<?php echo $target_attr; ?> class="<?php echo $active_statistics; ?>"><i class="fas fa-chart-line"></i> Statistics</a>
         <a href="../index.php" target="_blank"><i class="fas fa-eye"></i> View Site</a>
         <?php if (!$iframe_mode): ?>
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>

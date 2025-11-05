@@ -8,17 +8,19 @@ if(!isset($_SESSION['admin_logged_in'])) {
 }
 
 // Get statistics
-$stmt = $conn->query("SELECT COUNT(*) as count FROM skills");
-$skills_count = $stmt->fetch()['count'];
+require_once 'stats-helper.php';
 
-$stmt = $conn->query("SELECT COUNT(*) as count FROM projects");
-$projects_count = $stmt->fetch()['count'];
+$skills_count = getProjectStats($conn)['total'];
+$projects_count = getProjectStats($conn)['total'];
+$messages_count = getMessageStats($conn)['total'];
+$unread_messages_count = getMessageStats($conn)['unread'];
 
-$stmt = $conn->query("SELECT COUNT(*) as count FROM contact_messages");
-$messages_count = $stmt->fetch()['count'];
-
-$stmt = $conn->query("SELECT COUNT(*) as count FROM contact_messages WHERE is_read = 0");
-$unread_messages_count = $stmt->fetch()['count'];
+// Get visitor statistics
+$visitor_stats = getVisitorStats($conn);
+$total_visitors = $visitor_stats['total'];
+$unique_visitors_monthly = $visitor_stats['unique_monthly'];
+$daily_visitors = $visitor_stats['daily'];
+$avg_duration = formatDuration(getAverageVisitDuration($conn));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,8 +46,50 @@ $unread_messages_count = $stmt->fetch()['count'];
             </div>
 
             <div class="stats-grid">
+                <!-- Visitor Statistics -->
                 <div class="stat-card">
                     <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><?php echo number_format($total_visitors); ?></h3>
+                        <p>Total Visitors</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><?php echo number_format($unique_visitors_monthly); ?></h3>
+                        <p>Unique Visitors (30 days)</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><?php echo number_format($daily_visitors); ?></h3>
+                        <p>Today's Visitors</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3><?php echo $avg_duration; ?></h3>
+                        <p>Avg Visit Duration</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio Statistics -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                         <i class="fas fa-code"></i>
                     </div>
                     <div class="stat-info">
@@ -55,7 +99,7 @@ $unread_messages_count = $stmt->fetch()['count'];
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
                         <i class="fas fa-project-diagram"></i>
                     </div>
                     <div class="stat-info">
@@ -65,7 +109,7 @@ $unread_messages_count = $stmt->fetch()['count'];
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <i class="fas fa-envelope"></i>
                     </div>
                     <div class="stat-info">
@@ -75,7 +119,7 @@ $unread_messages_count = $stmt->fetch()['count'];
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <i class="fas fa-eye"></i>
                     </div>
                     <div class="stat-info">
