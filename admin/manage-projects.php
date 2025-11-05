@@ -14,24 +14,43 @@ $project_id = $_GET['id'] ?? null;
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'] ?? '';
     $description = $_POST['description'] ?? '';
-    $image_url = $_POST['image_url'] ?? '';
     $code_url = $_POST['code_url'] ?? '';
     $demo_url = $_POST['demo_url'] ?? '';
     $display_order = $_POST['display_order'] ?? 0;
     $technologies = $_POST['technologies'] ?? '';
-    
+
+    // Handle image upload
+    $image_url = '';
+    if(isset($_FILES['image']) && $_FILES['image']['error'] == UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/projects/';
+        if(!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        $file_name = uniqid() . '_' . basename($_FILES['image']['name']);
+        $target_file = $upload_dir . $file_name;
+        if(move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+            $image_url = 'uploads/projects/' . $file_name;
+        }
+    } elseif($action == 'edit' && $project_id) {
+        // Keep existing image if no new upload
+        $stmt = $conn->prepare("SELECT image_url FROM projects WHERE id = ?");
+        $stmt->execute([$project_id]);
+        $existing = $stmt->fetch();
+        $image_url = $existing['image_url'] ?? '';
+    }
+
     if($action == 'add') {
         $stmt = $conn->prepare("INSERT INTO projects (title, description, image_url, code_url, demo_url, display_order) VALUES (?, ?, ?, ?, ?, ?)");
         if($stmt->execute([$title, $description, $image_url, $code_url, $demo_url, $display_order])) {
             $project_id = $conn->lastInsertId();
-            
+
             // Add technologies
             $tech_array = array_filter(array_map('trim', explode(',', $technologies)));
             $stmt = $conn->prepare("INSERT INTO project_technologies (project_id, technology) VALUES (?, ?)");
             foreach($tech_array as $tech) {
                 $stmt->execute([$project_id, $tech]);
             }
-            
+
             $message = 'Project added successfully!';
             $action = 'list';
         }
@@ -41,14 +60,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Delete old technologies
             $stmt = $conn->prepare("DELETE FROM project_technologies WHERE project_id = ?");
             $stmt->execute([$project_id]);
-            
+
             // Add new technologies
             $tech_array = array_filter(array_map('trim', explode(',', $technologies)));
             $stmt = $conn->prepare("INSERT INTO project_technologies (project_id, technology) VALUES (?, ?)");
             foreach($tech_array as $tech) {
                 $stmt->execute([$project_id, $tech]);
             }
-            
+
             $message = 'Project updated successfully!';
             $action = 'list';
         }
@@ -123,7 +142,7 @@ function getProjectTech($pid) {
             <?php if($action == 'add' || $action == 'edit'): ?>
             <div class="form-container">
                 <h2><?php echo $action == 'add' ? 'Add New Project' : 'Edit Project'; ?></h2>
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="title">Project Title</label>
                         <input type="text" id="title" name="title" 
@@ -137,10 +156,11 @@ function getProjectTech($pid) {
                     </div>
                     
                     <div class="form-group">
-                        <label for="image_url">Image URL</label>
-                        <input type="text" id="image_url" name="image_url" 
-                               value="<?php echo htmlspecialchars($edit_project['image_url'] ?? ''); ?>" 
-                               placeholder="images/project1.jpg">
+                        <label for="image">Project Image</label>
+                        <input type="file" id="image" name="image" accept="image/*">
+                        <?php if($action == 'edit' && !empty($edit_project['image_url'])): ?>
+                        <p>Current image: <a href="../<?php echo htmlspecialchars($edit_project['image_url']); ?>" target="_blank">View</a></p>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="form-group">
